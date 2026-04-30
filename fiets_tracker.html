@@ -168,7 +168,7 @@ header h1 span { color: var(--accent); font-weight: 500; }
 
   <header>
     <div>
-      <div class="logo">fiets onderhoud tracker v1.0</div>
+      <div class="logo">fiets onderhoud tracker v1.1</div>
       <h1>Onderhoud<span>.</span></h1>
     </div>
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
@@ -582,16 +582,17 @@ async function fetchStravaData() {
   const ok = await refreshTokenIfNeeded();
   if (!ok) return;
   try {
-    const res = await fetch('https://www.strava.com/api/v3/athlete/bikes', {
+    const res = await fetch('https://www.strava.com/api/v3/athlete', {
       headers: { 'Authorization': `Bearer ${state.strava.token}` }
     });
-    const bikes = await res.json();
-    if (!Array.isArray(bikes)) { console.warn('Strava bikes response:', bikes); return; }
+    const athlete = await res.json();
+    if (!athlete || !athlete.bikes) { console.warn('Strava athlete response:', athlete); return; }
+    const bikes = athlete.bikes;
     Object.keys(BIKES).forEach(bikeId => {
       const stravaId = state.config[BIKES[bikeId].cfgKey];
       if (!stravaId) return;
       const found = bikes.find(b => b.id === stravaId);
-      if (found && found.distance) {
+      if (found && found.distance != null) {
         state.bikes[bikeId].km = Math.round(found.distance / 1000);
       }
     });
