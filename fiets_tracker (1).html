@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fiets Onderhoud Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f0f0f;
+  --surface: #1a1a1a;
+  --surface2: #222222;
+  --surface3: #2a2a2a;
+  --border: #333333;
+  --border2: #444444;
+  --text: #f0f0f0;
+  --text2: #888888;
+  --text3: #555555;
+  --accent: #e8ff47;
+  --accent2: #b8cc2a;
+  --orange: #ff6b35;
+  --red: #ff4444;
+  --green: #47ff8a;
+  --strava: #fc4c02;
+  --radius: 6px;
+  --radius-lg: 12px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+a { color: var(--accent); }
+
+/* ── Layout ── */
+.app { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem; }
+header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 2.5rem; gap: 1rem; flex-wrap: wrap; }
+.logo { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text3); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; }
+header h1 { font-size: 26px; font-weight: 300; letter-spacing: -0.5px; }
+header h1 span { color: var(--accent); font-weight: 500; }
+
+/* ── Strava ── */
+.strava-btn { display: flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: var(--radius); border: 1px solid var(--strava); background: transparent; color: var(--strava); font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+.strava-btn:hover { background: var(--strava); color: white; }
+.strava-btn.connected { border-color: var(--green); color: var(--green); }
+.strava-btn.connected:hover { background: var(--green); color: #0f0f0f; }
+.strava-icon { width: 16px; height: 16px; }
+
+/* ── Setup panel ── */
+.setup-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 2rem; display: none; }
+.setup-panel h3 { font-size: 14px; font-weight: 500; margin-bottom: 4px; }
+.setup-panel p { font-size: 13px; color: var(--text2); line-height: 1.6; margin-bottom: 1rem; }
+.setup-panel ol { font-size: 13px; color: var(--text2); line-height: 2; padding-left: 1.2rem; margin-bottom: 1rem; }
+.setup-panel ol li a { color: var(--accent); }
+.input-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
+.input-row label { font-size: 12px; color: var(--text2); width: 110px; flex-shrink: 0; font-family: 'DM Mono', monospace; }
+.input-row input { flex: 1; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-family: 'DM Mono', monospace; font-size: 12px; padding: 8px 10px; }
+.input-row input:focus { outline: none; border-color: var(--accent); }
+.btn { padding: 8px 18px; border-radius: var(--radius); border: 1px solid var(--border2); background: transparent; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 13px; cursor: pointer; transition: all 0.15s; }
+.btn:hover { border-color: var(--accent); color: var(--accent); }
+.btn.primary { background: var(--accent); color: #0f0f0f; border-color: var(--accent); font-weight: 500; }
+.btn.primary:hover { background: var(--accent2); border-color: var(--accent2); }
+.btn.danger { border-color: var(--red); color: var(--red); }
+.btn.danger:hover { background: var(--red); color: white; }
+
+/* ── Tabs ── */
+.tabs { display: flex; gap: 2px; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+.tab { font-size: 13px; padding: 10px 18px; cursor: pointer; border: none; background: none; color: var(--text2); border-bottom: 2px solid transparent; margin-bottom: -1px; font-family: 'DM Sans', sans-serif; transition: all 0.15s; }
+.tab:hover { color: var(--text); }
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 500; }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* ── Bike header ── */
+.bike-header { display: grid; grid-template-columns: 1fr auto; gap: 1rem; align-items: start; margin-bottom: 1.5rem; }
+.bike-meta { font-size: 12px; color: var(--text2); font-family: 'DM Mono', monospace; margin-top: 4px; }
+.km-display { text-align: right; }
+.km-display .km-val { font-family: 'DM Mono', monospace; font-size: 32px; font-weight: 500; color: var(--accent); line-height: 1; }
+.km-display .km-label { font-size: 11px; color: var(--text3); margin-top: 2px; }
+.km-input-wrap { display: flex; align-items: center; gap: 8px; margin-top: 6px; justify-content: flex-end; }
+.km-input-wrap input { width: 100px; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-family: 'DM Mono', monospace; font-size: 13px; padding: 6px 8px; text-align: right; }
+.km-input-wrap input:focus { outline: none; border-color: var(--accent); }
+
+/* ── Parts table ── */
+.parts-table { width: 100%; border-collapse: collapse; }
+.parts-table th { font-size: 10px; font-family: 'DM Mono', monospace; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text3); padding: 8px 12px; text-align: left; border-bottom: 1px solid var(--border); font-weight: 400; }
+.parts-table td { padding: 0; border-bottom: 1px solid var(--border); vertical-align: middle; }
+.part-row { display: contents; }
+.part-row td { transition: background 0.1s; }
+.part-row:hover td { background: var(--surface2); }
+.td-inner { padding: 12px; }
+.part-name { font-size: 14px; font-weight: 500; color: var(--text); }
+.part-model { font-size: 11px; color: var(--text2); font-family: 'DM Mono', monospace; margin-top: 2px; }
+.bar-wrap { display: flex; align-items: center; gap: 10px; }
+.bar { flex: 1; height: 4px; background: var(--surface3); border-radius: 2px; overflow: hidden; min-width: 80px; }
+.bar-fill { height: 100%; border-radius: 2px; transition: width 0.4s; }
+.bar-fill.ok { background: var(--green); }
+.bar-fill.warn { background: var(--orange); }
+.bar-fill.danger { background: var(--red); }
+.bar-fill.unknown { background: var(--text3); }
+.pct-txt { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text2); width: 36px; text-align: right; }
+.badge { font-size: 10px; font-family: 'DM Mono', monospace; padding: 3px 8px; border-radius: 3px; font-weight: 500; white-space: nowrap; }
+.badge.ok { background: #0f2a1a; color: var(--green); border: 1px solid #1a4a2a; }
+.badge.warn { background: #2a1a0a; color: var(--orange); border: 1px solid #4a2a0a; }
+.badge.danger { background: #2a0a0a; color: var(--red); border: 1px solid #4a1a1a; }
+.badge.unknown { background: var(--surface3); color: var(--text3); border: 1px solid var(--border); }
+.action-btns { display: flex; gap: 6px; }
+.icon-btn { background: transparent; border: 1px solid var(--border); border-radius: var(--radius); color: var(--text2); font-size: 11px; padding: 5px 10px; cursor: pointer; font-family: 'DM Mono', monospace; transition: all 0.12s; white-space: nowrap; }
+.icon-btn:hover { border-color: var(--text2); color: var(--text); }
+.icon-btn.replace-btn:hover { border-color: var(--green); color: var(--green); }
+
+/* ── Detail panel ── */
+.detail-panel { background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius-lg); padding: 1.25rem; margin-top: 2px; margin-bottom: 2px; display: none; }
+.detail-panel.open { display: block; }
+.detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1rem; }
+.detail-field { display: flex; flex-direction: column; gap: 4px; }
+.detail-field label { font-size: 10px; font-family: 'DM Mono', monospace; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; }
+.detail-field input { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-family: 'DM Mono', monospace; font-size: 12px; padding: 7px 10px; }
+.detail-field input:focus { outline: none; border-color: var(--accent); }
+.detail-actions { display: flex; gap: 8px; }
+
+/* ── Geschiedenis ── */
+.history-section { margin-top: 1rem; }
+.history-title { font-size: 10px; font-family: 'DM Mono', monospace; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+.history-list { display: flex; flex-direction: column; gap: 4px; }
+.history-item { display: flex; align-items: center; gap: 10px; font-size: 11px; font-family: 'DM Mono', monospace; color: var(--text2); background: var(--surface2); border-radius: var(--radius); padding: 6px 10px; }
+.history-item .h-date { color: var(--text3); flex-shrink: 0; }
+.history-item .h-km { color: var(--accent); flex-shrink: 0; }
+.history-item .h-model { flex: 1; }
+.history-empty { font-size: 12px; color: var(--text3); font-style: italic; }
+
+/* ── Vervang modal ── */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 100; display: none; align-items: center; justify-content: center; }
+.modal-overlay.open { display: flex; }
+.modal { background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius-lg); padding: 1.5rem; width: 400px; max-width: 90vw; }
+.modal h3 { font-size: 16px; font-weight: 500; margin-bottom: 4px; }
+.modal p { font-size: 13px; color: var(--text2); margin-bottom: 1rem; }
+.modal-fields { display: flex; flex-direction: column; gap: 10px; margin-bottom: 1.25rem; }
+.modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
+
+/* ── Alerts tab ── */
+.alerts-grid { display: flex; flex-direction: column; gap: 8px; }
+.alert-card { background: var(--surface); border-radius: var(--radius-lg); padding: 1rem 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; border-left: 3px solid; }
+.alert-card.danger { border-left-color: var(--red); }
+.alert-card.warn { border-left-color: var(--orange); }
+.alert-card .a-bike { font-size: 10px; font-family: 'DM Mono', monospace; color: var(--text3); margin-bottom: 2px; }
+.alert-card .a-part { font-size: 14px; font-weight: 500; }
+.alert-card .a-msg { font-size: 12px; color: var(--text2); margin-top: 2px; }
+.empty-state { text-align: center; padding: 3rem 1rem; color: var(--text3); font-size: 14px; }
+.empty-state .big { font-size: 32px; margin-bottom: 8px; }
+
+/* ── Strava status bar ── */
+.status-bar { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 8px 14px; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; font-size: 12px; font-family: 'DM Mono', monospace; }
+.status-dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; margin-right: 8px; }
+.status-dot.connected { background: var(--green); box-shadow: 0 0 6px var(--green); }
+.status-dot.disconnected { background: var(--text3); }
+.status-txt { color: var(--text2); }
+
+/* ── Strava uitleg ── */
+.info-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.25rem; margin-bottom: 2rem; }
+.info-box h3 { font-size: 14px; font-weight: 500; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+.info-box ol { padding-left: 1.2rem; }
+.info-box ol li { font-size: 13px; color: var(--text2); line-height: 2; }
+.info-box ol li a { color: var(--accent); }
+.info-box ol li code { background: var(--surface3); border-radius: 3px; padding: 1px 5px; font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text); }
+.tag { font-size: 10px; background: var(--surface3); color: var(--text3); padding: 2px 6px; border-radius: 3px; font-family: 'DM Mono', monospace; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header>
+    <div>
+      <div class="logo">fiets onderhoud tracker v1.0</div>
+      <h1>Onderhoud<span>.</span></h1>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <button class="strava-btn" id="strava-main-btn" onclick="toggleSetup()">
+        <svg class="strava-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/></svg>
+        <span id="strava-btn-txt">Strava koppelen</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Strava setup panel -->
+  <div class="setup-panel" id="setup-panel">
+    <h3>Strava koppelen — stap voor stap</h3>
+    <p>Je hebt een gratis Strava API-applicatie nodig. Dit doe je één keer:</p>
+    <ol>
+      <li>Ga naar <a href="https://www.strava.com/settings/api" target="_blank">strava.com/settings/api</a></li>
+      <li>Maak een applicatie aan (naam maakt niet uit, bijv. "Mijn Fiets Tracker")</li>
+      <li>Zet bij <strong>Authorization Callback Domain</strong>: <code>localhost</code></li>
+      <li>Kopieer je <strong>Client ID</strong> en <strong>Client Secret</strong> hieronder</li>
+      <li>Klik "Autoriseer met Strava" — log in en geef toestemming</li>
+      <li>De kilometerstand wordt daarna automatisch ingeladen per fiets</li>
+    </ol>
+    <p style="margin-bottom:12px;">Vul ook de <strong>Strava Bike ID</strong> per fiets in. Die vind je via Strava → Instellingen → Mijn uitrusting. De ID staat in de URL (bijv. <code>b12345678</code>).</p>
+    <div class="input-row"><label>Client ID</label><input id="cfg-client-id" placeholder="bijv. 12345" oninput="saveConfig()"></div>
+    <div class="input-row"><label>Client Secret</label><input id="cfg-client-secret" placeholder="abc123..." type="password" oninput="saveConfig()"></div>
+    <div style="height:12px"></div>
+    <div class="input-row"><label>Bike ID — ROSE PRO</label><input id="cfg-bid-rose-pro" placeholder="b12345678" oninput="saveConfig()"></div>
+    <div class="input-row"><label>Bike ID — ROSE Hobo</label><input id="cfg-bid-hobo" placeholder="b12345678" oninput="saveConfig()"></div>
+    <div class="input-row"><label>Bike ID — Liv Avail</label><input id="cfg-bid-liv" placeholder="b12345678" oninput="saveConfig()"></div>
+    <div style="height:12px"></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button class="btn primary" onclick="startOAuth()">Autoriseer met Strava</button>
+      <button class="btn" onclick="fetchStravaData()" id="refresh-btn" style="display:none;">Ververs km-standen</button>
+      <button class="btn" onclick="toggleSetup()">Sluiten</button>
+      <button class="btn danger" onclick="disconnectStrava()">Verbinding verbreken</button>
+    </div>
+  </div>
+
+  <!-- Status bar -->
+  <div class="status-bar" id="status-bar">
+    <div><span class="status-dot disconnected" id="status-dot"></span><span class="status-txt" id="status-txt">Strava niet verbonden — km handmatig invoeren</span></div>
+    <span id="last-sync" style="color:var(--text3);font-size:11px;"></span>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('rose-pro',this)">ROSE PRO SL</button>
+    <button class="tab" onclick="switchTab('hobo',this)">ROSE Hobo</button>
+    <button class="tab" onclick="switchTab('liv',this)">Liv Avail AR</button>
+    <button class="tab" onclick="switchTab('alerts',this)">Waarschuwingen</button>
+  </div>
+
+  <div id="tab-rose-pro" class="tab-content active"></div>
+  <div id="tab-hobo" class="tab-content"></div>
+  <div id="tab-liv" class="tab-content"></div>
+  <div id="tab-alerts" class="tab-content"></div>
+
+</div>
+
+<!-- Vervang modal -->
+<div class="modal-overlay" id="replace-modal">
+  <div class="modal">
+    <h3>Onderdeel vervangen</h3>
+    <p id="modal-desc">De teller wordt gereset en de vervanging wordt opgeslagen in de geschiedenis.</p>
+    <div class="modal-fields">
+      <div class="detail-field"><label>Nieuw model / type</label><input id="modal-model" placeholder="bijv. Shimano CN-HG701-11"></div>
+      <div class="detail-field"><label>Vervangingsdatum</label><input id="modal-date" type="date"></div>
+      <div class="detail-field"><label>Km-stand bij vervanging</label><input id="modal-km" type="number" placeholder="bijv. 10250"></div>
+      <div class="detail-field"><label>Notitie (optioneel)</label><input id="modal-note" placeholder="bijv. gelijktijdig cassette vervangen"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal()">Annuleren</button>
+      <button class="btn primary" onclick="confirmReplace()">Bevestig vervanging</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const BIKES = {
+  'rose-pro': { name: 'ROSE PRO SL DISC', owner: 'Esmee', spec: 'Shimano Ultegra · ~10.000 km', cfgKey: 'bid-rose-pro' },
+  'hobo':     { name: 'ROSE Hobo Dropbar', owner: 'Esmee', spec: 'Gravel', cfgKey: 'bid-hobo' },
+  'liv':      { name: 'Liv Avail AR 2 2021', owner: 'Partner', spec: 'Racefiets', cfgKey: 'bid-liv' }
+};
+
+const PARTS_DEF = [
+  { id: 'ketting',       name: 'Ketting',               cat: 'Aandrijving', interval: { 'rose-pro': 2500, 'hobo': 2000, 'liv': 2500 } },
+  { id: 'cassette',      name: 'Cassette',              cat: 'Aandrijving', interval: { 'rose-pro': 8000, 'hobo': 6000, 'liv': 8000 } },
+  { id: 'rem-voor',      name: 'Remblokken voor',       cat: 'Remmen',      interval: { 'rose-pro': 3000, 'hobo': 2500, 'liv': 3000 } },
+  { id: 'rem-achter',    name: 'Remblokken achter',     cat: 'Remmen',      interval: { 'rose-pro': 3000, 'hobo': 2500, 'liv': 3000 } },
+  { id: 'balhoofd',      name: 'Lager — balhoofd',      cat: 'Lagers',      interval: { 'rose-pro': 15000, 'hobo': 10000, 'liv': 15000 } },
+  { id: 'trapas',        name: 'Lager — trapas',        cat: 'Lagers',      interval: { 'rose-pro': 15000, 'hobo': 10000, 'liv': 15000 } },
+  { id: 'chainring',     name: 'Tandwiel / chainring',  cat: 'Aandrijving', interval: { 'rose-pro': 15000, 'hobo': 12000, 'liv': 15000 } },
+  { id: 'shift-in',      name: 'Shiftkabels binnen',    cat: 'Kabels',      interval: { 'rose-pro': 10000, 'hobo': 8000,  'liv': 10000 } },
+  { id: 'shift-out',     name: 'Shiftkabels buiten',    cat: 'Kabels',      interval: { 'rose-pro': 20000, 'hobo': 15000, 'liv': 20000 } },
+  { id: 'stuurlint',     name: 'Stuurlint / bar tape',  cat: 'Comfort',     interval: { 'rose-pro': 8000,  'hobo': 6000,  'liv': 8000 } },
+  { id: 'band-voor',     name: 'Band voor',             cat: 'Banden',      interval: { 'rose-pro': 5000,  'hobo': 4000,  'liv': 5000 } },
+  { id: 'band-achter',   name: 'Band achter',           cat: 'Banden',      interval: { 'rose-pro': 4000,  'hobo': 3500,  'liv': 4000 } },
+];
+
+let state = { bikes: {}, config: {}, strava: { connected: false, token: null, expiresAt: 0 } };
+let modalContext = null;
+
+function loadState() {
+  try { const s = localStorage.getItem('fiets-tracker'); if (s) state = { ...state, ...JSON.parse(s) }; } catch(e) {}
+  Object.keys(BIKES).forEach(bid => {
+    if (!state.bikes[bid]) state.bikes[bid] = { km: 0, parts: {} };
+    PARTS_DEF.forEach(p => {
+      if (!state.bikes[bid].parts[p.id]) {
+        state.bikes[bid].parts[p.id] = { model: '', kmInstall: 0, interval: p.interval[bid], history: [] };
+      }
+    });
+  });
+}
+
+function saveState() {
+  try { localStorage.setItem('fiets-tracker', JSON.stringify(state)); } catch(e) {}
+}
+
+function loadConfig() {
+  try {
+    const c = localStorage.getItem('fiets-config');
+    if (c) state.config = JSON.parse(c);
+    ['client-id','client-secret','bid-rose-pro','bid-hobo','bid-liv'].forEach(k => {
+      const el = document.getElementById('cfg-' + k);
+      if (el && state.config[k]) el.value = state.config[k];
+    });
+  } catch(e) {}
+}
+
+function saveConfig() {
+  ['client-id','client-secret','bid-rose-pro','bid-hobo','bid-liv'].forEach(k => {
+    const el = document.getElementById('cfg-' + k);
+    if (el) state.config[k] = el.value;
+  });
+  localStorage.setItem('fiets-config', JSON.stringify(state.config));
+}
+
+function getStatus(bike, part) {
+  const used = bike.km - part.kmInstall;
+  if (bike.km === 0 || (part.kmInstall === 0 && bike.km === 0)) return { pct: 0, cls: 'unknown', label: 'Onbekend', remaining: null };
+  const remaining = part.interval - used;
+  const pct = Math.max(0, Math.min(100, Math.round((remaining / part.interval) * 100)));
+  if (remaining <= 0) return { pct: 0, cls: 'danger', label: 'Vervangen!', remaining: 0 };
+  if (pct <= 20) return { pct, cls: 'warn', label: `${remaining.toLocaleString('nl')} km`, remaining };
+  return { pct, cls: 'ok', label: `${remaining.toLocaleString('nl')} km`, remaining };
+}
+
+function renderBike(bikeId) {
+  const bike = state.bikes[bikeId];
+  const meta = BIKES[bikeId];
+  const container = document.getElementById('tab-' + bikeId);
+  if (!container) return;
+
+  const connected = state.strava.connected;
+  const kmField = connected
+    ? `<div class="km-display"><div class="km-val">${bike.km.toLocaleString('nl')}</div><div class="km-label">km via Strava</div></div>`
+    : `<div class="km-display">
+        <div class="km-val">${bike.km ? bike.km.toLocaleString('nl') : '—'}</div>
+        <div class="km-label">km (handmatig)</div>
+        <div class="km-input-wrap">
+          <input type="number" value="${bike.km || ''}" placeholder="0" onchange="updateKm('${bikeId}',this.value)">
+          <span style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;">km</span>
+        </div>
+       </div>`;
+
+  let rows = '';
+  PARTS_DEF.forEach(p => {
+    const part = bike.parts[p.id];
+    const st = getStatus(bike, part);
+    rows += `
+      <tr class="part-row" onclick="toggleDetail('${bikeId}','${p.id}',this)" style="cursor:pointer;">
+        <td><div class="td-inner">
+          <div class="part-name">${p.name}</div>
+          <div class="part-model">${part.model || 'klik om in te vullen'}</div>
+        </div></td>
+        <td style="color:var(--text3);font-size:11px;font-family:'DM Mono',monospace;padding:0 12px;">${p.cat}</td>
+        <td><div class="td-inner">
+          <div class="bar-wrap">
+            <div class="bar"><div class="bar-fill ${st.cls}" style="width:${st.pct}%"></div></div>
+            <span class="pct-txt">${st.cls !== 'unknown' ? st.pct + '%' : ''}</span>
+          </div>
+        </div></td>
+        <td><div class="td-inner"><span class="badge ${st.cls}">${st.label}</span></div></td>
+        <td><div class="td-inner">
+          <div class="action-btns">
+            <button class="icon-btn replace-btn" onclick="event.stopPropagation();openReplace('${bikeId}','${p.id}')">vervangen</button>
+            <button class="icon-btn" onclick="event.stopPropagation();toggleDetail('${bikeId}','${p.id}')">bewerk</button>
+          </div>
+        </div></td>
+      </tr>
+      <tr id="detail-row-${bikeId}-${p.id}" style="display:none;">
+        <td colspan="5" style="padding:0 12px 12px;">
+          ${renderDetail(bikeId, p.id, part)}
+        </td>
+      </tr>`;
+  });
+
+  container.innerHTML = `
+    <div class="bike-header">
+      <div>
+        <div style="font-size:18px;font-weight:500;">${meta.name}</div>
+        <div class="bike-meta">${meta.owner} · ${meta.spec}</div>
+      </div>
+      ${kmField}
+    </div>
+    <table class="parts-table">
+      <thead><tr>
+        <th>Onderdeel</th><th>Categorie</th><th>Status</th><th>Resterend</th><th>Actie</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
+function renderDetail(bikeId, partId, part) {
+  const hist = (part.history || []).slice().reverse();
+  const histRows = hist.length
+    ? hist.map(h => `<div class="history-item"><span class="h-date">${h.date}</span><span class="h-km">${Number(h.km).toLocaleString('nl')} km</span><span class="h-model">${h.model || '—'}</span>${h.note ? `<span style="color:var(--text3)">${h.note}</span>` : ''}</div>`).join('')
+    : '<div class="history-empty">Nog geen vervangingen vastgelegd</div>';
+
+  return `
+    <div class="detail-panel open">
+      <div class="detail-grid">
+        <div class="detail-field"><label>Model / type</label><input id="df-model-${bikeId}-${partId}" value="${part.model || ''}" placeholder="bijv. Shimano CN-HG701-11" onchange="savePart('${bikeId}','${partId}')"></div>
+        <div class="detail-field"><label>Km bij installatie</label><input type="number" id="df-kmi-${bikeId}-${partId}" value="${part.kmInstall || 0}" onchange="savePart('${bikeId}','${partId}')"></div>
+        <div class="detail-field"><label>Interval (km)</label><input type="number" id="df-int-${bikeId}-${partId}" value="${part.interval}" onchange="savePart('${bikeId}','${partId}')"></div>
+      </div>
+      <div class="history-section">
+        <div class="history-title">Vervangingshistorie</div>
+        <div class="history-list">${histRows}</div>
+      </div>
+    </div>`;
+}
+
+function toggleDetail(bikeId, partId) {
+  const row = document.getElementById(`detail-row-${bikeId}-${partId}`);
+  if (!row) return;
+  const isOpen = row.style.display !== 'none';
+  document.querySelectorAll('[id^="detail-row-"]').forEach(r => r.style.display = 'none');
+  if (!isOpen) row.style.display = 'table-row';
+}
+
+function savePart(bikeId, partId) {
+  const part = state.bikes[bikeId].parts[partId];
+  const m = document.getElementById(`df-model-${bikeId}-${partId}`);
+  const k = document.getElementById(`df-kmi-${bikeId}-${partId}`);
+  const i = document.getElementById(`df-int-${bikeId}-${partId}`);
+  if (m) part.model = m.value;
+  if (k) part.kmInstall = parseInt(k.value) || 0;
+  if (i) part.interval = parseInt(i.value) || part.interval;
+  saveState();
+  renderBike(bikeId);
+  renderAlerts();
+}
+
+function updateKm(bikeId, val) {
+  state.bikes[bikeId].km = parseInt(val) || 0;
+  saveState();
+  renderBike(bikeId);
+  renderAlerts();
+}
+
+function openReplace(bikeId, partId) {
+  modalContext = { bikeId, partId };
+  const part = state.bikes[bikeId].parts[partId];
+  const bike = state.bikes[bikeId];
+  const meta = BIKES[bikeId];
+  const pdef = PARTS_DEF.find(p => p.id === partId);
+  document.getElementById('modal-desc').textContent = `${pdef.name} op ${meta.name} — teller wordt gereset.`;
+  document.getElementById('modal-model').value = part.model || '';
+  document.getElementById('modal-date').value = new Date().toISOString().split('T')[0];
+  document.getElementById('modal-km').value = bike.km || '';
+  document.getElementById('modal-note').value = '';
+  document.getElementById('replace-modal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('replace-modal').classList.remove('open');
+  modalContext = null;
+}
+
+function confirmReplace() {
+  if (!modalContext) return;
+  const { bikeId, partId } = modalContext;
+  const part = state.bikes[bikeId].parts[partId];
+  const model = document.getElementById('modal-model').value;
+  const date  = document.getElementById('modal-date').value;
+  const km    = parseInt(document.getElementById('modal-km').value) || state.bikes[bikeId].km;
+  const note  = document.getElementById('modal-note').value;
+
+  if (!part.history) part.history = [];
+  part.history.push({ date, km, model: model || part.model, note });
+  part.model = model || part.model;
+  part.kmInstall = km;
+  if (km > state.bikes[bikeId].km) state.bikes[bikeId].km = km;
+
+  saveState();
+  closeModal();
+  renderBike(bikeId);
+  renderAlerts();
+}
+
+function renderAlerts() {
+  const container = document.getElementById('tab-alerts');
+  let html = '<div class="alerts-grid">';
+  let any = false;
+
+  Object.keys(BIKES).forEach(bikeId => {
+    const bike = state.bikes[bikeId];
+    PARTS_DEF.forEach(p => {
+      const part = bike.parts[p.id];
+      const st = getStatus(bike, part);
+      if (st.cls === 'danger' || st.cls === 'warn') {
+        any = true;
+        html += `<div class="alert-card ${st.cls}">
+          <div>
+            <div class="a-bike">${BIKES[bikeId].name}</div>
+            <div class="a-part">${p.name}</div>
+            <div class="a-msg">${st.cls === 'danger' ? 'Vervangingstijd bereikt!' : `Nog ${st.remaining.toLocaleString('nl')} km — bijna tijd voor onderhoud`}</div>
+          </div>
+          <button class="icon-btn replace-btn" onclick="openReplace('${bikeId}','${p.id}');switchTab('${bikeId}',null)">vervangen</button>
+        </div>`;
+      }
+    });
+  });
+
+  if (!any) html += `<div class="empty-state"><div class="big">✓</div>Alles in orde — geen waarschuwingen op dit moment.</div>`;
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  if (btn) btn.classList.add('active');
+  if (id === 'alerts') renderAlerts();
+  else renderBike(id);
+}
+
+function toggleSetup() {
+  const p = document.getElementById('setup-panel');
+  p.style.display = p.style.display === 'block' ? 'none' : 'block';
+}
+
+// ── Strava OAuth ──
+function startOAuth() {
+  const clientId = state.config['client-id'];
+  if (!clientId) { alert('Vul eerst je Strava Client ID in.'); return; }
+  const redirectUri = encodeURIComponent(window.location.href.split('?')[0]);
+  const scope = 'read,activity:read';
+  const url = `https://www.strava.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=${scope}`;
+  window.location.href = url;
+}
+
+async function handleOAuthCallback() {
+  const params = new URLSearchParams(window.location.search);
+  const code = params.get('code');
+  if (!code) return;
+  history.replaceState({}, '', window.location.pathname);
+  const clientId = state.config['client-id'];
+  const clientSecret = state.config['client-secret'];
+  if (!clientId || !clientSecret) {
+    alert('Client ID of Client Secret ontbreekt. Vul deze eerst in via "Strava koppelen".');
+    return;
+  }
+  try {
+    const res = await fetch('https://www.strava.com/oauth/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ client_id: clientId, client_secret: clientSecret, code, grant_type: 'authorization_code' })
+    });
+    const data = await res.json();
+    if (data.access_token) {
+      state.strava.connected = true;
+      state.strava.token = data.access_token;
+      state.strava.expiresAt = data.expires_at * 1000;
+      saveState();
+      updateStravaUI();
+      fetchStravaData();
+    } else {
+      alert('Strava autorisatie mislukt: ' + (data.message || JSON.stringify(data)));
+    }
+  } catch(e) { alert('Fout bij Strava koppeling: ' + e.message); }
+}
+
+async function refreshTokenIfNeeded() {
+  if (!state.strava.connected) return false;
+  if (Date.now() < state.strava.expiresAt - 60000) return true;
+  const clientId = state.config['client-id'];
+  const clientSecret = state.config['client-secret'];
+  if (!state.strava.refreshToken || !clientId || !clientSecret) {
+    disconnectStrava(); return false;
+  }
+  try {
+    const res = await fetch('https://www.strava.com/oauth/token', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ client_id: clientId, client_secret: clientSecret, refresh_token: state.strava.refreshToken, grant_type: 'refresh_token' })
+    });
+    const data = await res.json();
+    if (data.access_token) {
+      state.strava.token = data.access_token;
+      state.strava.expiresAt = data.expires_at * 1000;
+      state.strava.refreshToken = data.refresh_token;
+      saveState(); return true;
+    }
+  } catch(e) {}
+  return false;
+}
+
+async function fetchStravaData() {
+  const ok = await refreshTokenIfNeeded();
+  if (!ok) return;
+  try {
+    const res = await fetch('https://www.strava.com/api/v3/athlete', {
+      headers: { 'Authorization': `Bearer ${state.strava.token}` }
+    });
+    const athlete = await res.json();
+    if (!athlete || !athlete.bikes) { console.warn('Strava athlete response:', athlete); return; }
+    const bikes = athlete.bikes;
+    Object.keys(BIKES).forEach(bikeId => {
+      const stravaId = state.config[BIKES[bikeId].cfgKey];
+      if (!stravaId) return;
+      const found = bikes.find(b => b.id === stravaId);
+      if (found && found.distance != null) {
+        state.bikes[bikeId].km = Math.round(found.distance / 1000);
+      }
+    });
+    state.strava.lastSync = new Date().toLocaleString('nl-NL');
+    saveState();
+    updateStravaUI();
+    ['rose-pro','hobo','liv'].forEach(b => renderBike(b));
+    renderAlerts();
+  } catch(e) { console.error('Strava fetch error:', e); }
+}
+
+function disconnectStrava() {
+  state.strava = { connected: false, token: null, expiresAt: 0 };
+  saveState(); updateStravaUI();
+  document.getElementById('setup-panel').style.display = 'none';
+}
+
+function updateStravaUI() {
+  const connected = state.strava.connected;
+  document.getElementById('strava-btn-txt').textContent = connected ? 'Strava verbonden' : 'Strava koppelen';
+  document.getElementById('strava-main-btn').className = 'strava-btn' + (connected ? ' connected' : '');
+  document.getElementById('status-dot').className = 'status-dot ' + (connected ? 'connected' : 'disconnected');
+  document.getElementById('status-txt').textContent = connected ? 'Strava verbonden — km-standen worden automatisch geladen' : 'Strava niet verbonden — km handmatig invoeren';
+  const rb = document.getElementById('refresh-btn');
+  if (rb) rb.style.display = connected ? 'inline-block' : 'none';
+  if (state.strava.lastSync) document.getElementById('last-sync').textContent = 'Sync: ' + state.strava.lastSync;
+}
+
+// Init
+loadState();
+loadConfig();
+handleOAuthCallback();
+updateStravaUI();
+['rose-pro','hobo','liv'].forEach(b => renderBike(b));
+renderAlerts();
+
+// Auto-refresh Strava elke 30 min als verbonden
+setInterval(() => { if (state.strava.connected) fetchStravaData(); }, 30 * 60 * 1000);
+</script>
+</body>
+</html>
