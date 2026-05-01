@@ -6,7 +6,7 @@
 <title>Fiets Onderhoud Tracker</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0f0f0f;--surface:#1a1a1a;--surface2:#222;--surface3:#2a2a2a;--border:#333;--border2:#444;--text:#f0f0f0;--text2:#888;--text3:#555;--accent:#e8ff47;--accent2:#b8cc2a;--orange:#ff6b35;--red:#ff4444;--green:#47ff8a;--blue:#47aaff;--strava:#fc4c02;--radius:6px;--radius-lg:12px}
+:root{--bg:#0f0f0f;--surface:#1a1a1a;--surface2:#222;--surface3:#2a2a2a;--border:#333;--border2:#444;--text:#f0f0f0;--text2:#888;--text3:#555;--accent:#e8ff47;--accent2:#b8cc2a;--orange:#ff6b35;--red:#ff4444;--green:#47ff8a;--blue:#47aaff;--purple:#b47fff;--strava:#fc4c02;--radius:6px;--radius-lg:12px}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
 .app{max-width:760px;margin:0 auto;padding:2rem 1.25rem}
@@ -14,10 +14,12 @@ header{display:flex;align-items:flex-start;justify-content:space-between;margin-
 .logo{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
 header h1{font-size:24px;font-weight:300;letter-spacing:-.5px}
 header h1 span{color:var(--accent);font-weight:500}
-.strava-btn{display:flex;align-items:center;gap:8px;padding:9px 16px;border-radius:var(--radius);border:1px solid var(--strava);background:transparent;color:var(--strava);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;white-space:nowrap}
+.strava-btns{display:flex;gap:8px;flex-wrap:wrap}
+.strava-btn{display:flex;align-items:center;gap:7px;padding:8px 14px;border-radius:var(--radius);border:1px solid var(--strava);background:transparent;color:var(--strava);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;white-space:nowrap}
 .strava-btn:hover{background:var(--strava);color:#fff}
 .strava-btn.connected{border-color:var(--green);color:var(--green)}
 .strava-btn.connected:hover{background:var(--green);color:#0f0f0f}
+.strava-btn svg{width:14px;height:14px;flex-shrink:0}
 .setup-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:1.5rem;display:none}
 .setup-panel h3{font-size:14px;font-weight:500;margin-bottom:6px}
 .setup-panel p,.setup-panel ol li{font-size:13px;color:var(--text2);line-height:1.7}
@@ -25,6 +27,8 @@ header h1 span{color:var(--accent);font-weight:500}
 .setup-panel ol{padding-left:1.2rem;margin-bottom:12px}
 .setup-panel ol li a{color:var(--accent)}
 .setup-panel ol li code{background:var(--surface3);border-radius:3px;padding:1px 5px;font-family:'DM Mono',monospace;font-size:11px;color:var(--text)}
+.setup-section{border-top:1px solid var(--border);padding-top:1rem;margin-top:1rem}
+.setup-section h4{font-size:13px;font-weight:500;margin-bottom:10px;color:var(--text)}
 .input-row{display:flex;gap:8px;margin-bottom:8px;align-items:center}
 .input-row label{font-size:12px;color:var(--text2);width:130px;flex-shrink:0;font-family:'DM Mono',monospace}
 .input-row input{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-family:'DM Mono',monospace;font-size:12px;padding:8px 10px;min-width:0}
@@ -33,11 +37,14 @@ header h1 span{color:var(--accent);font-weight:500}
 .btn:hover{border-color:var(--accent);color:var(--accent)}
 .btn.primary{background:var(--accent);color:#0f0f0f;border-color:var(--accent);font-weight:500}
 .btn.primary:hover{background:var(--accent2);border-color:var(--accent2)}
+.btn.secondary{border-color:var(--purple);color:var(--purple)}
+.btn.secondary:hover{background:var(--purple);color:#0f0f0f}
 .btn.danger{border-color:var(--red);color:var(--red)}
 .btn.danger:hover{background:var(--red);color:#fff}
 .btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-.status-bar{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:8px 14px;margin-bottom:1.5rem;display:flex;align-items:center;justify-content:space-between;font-size:12px;font-family:'DM Mono',monospace;flex-wrap:wrap;gap:6px}
-.status-dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:8px}
+.status-bars{display:flex;flex-direction:column;gap:6px;margin-bottom:1.5rem}
+.status-bar{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:7px 14px;display:flex;align-items:center;justify-content:space-between;font-size:12px;font-family:'DM Mono',monospace;flex-wrap:wrap;gap:6px}
+.status-dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:8px;flex-shrink:0}
 .status-dot.connected{background:var(--green);box-shadow:0 0 6px var(--green)}
 .status-dot.disconnected{background:var(--text3)}
 .status-txt{color:var(--text2)}
@@ -77,6 +84,7 @@ header h1 span{color:var(--accent);font-weight:500}
 .badge.checked{background:#1a1500;color:var(--orange);border:1px solid #3a2d00}
 .badge.danger{background:#2a0a0a;color:var(--red);border:1px solid #4a1a1a}
 .badge.unknown{background:var(--surface3);color:var(--text3);border:1px solid var(--border)}
+.badge.sealant{background:#0f1a2a;color:var(--blue);border:1px solid #1a3a5a}
 .stock-dot{width:8px;height:8px;border-radius:50%;background:var(--blue);flex-shrink:0}
 .checked-dot{width:8px;height:8px;border-radius:50%;background:var(--orange);flex-shrink:0}
 .part-detail{border-top:1px solid var(--border);padding:16px;display:none;background:var(--surface2)}
@@ -98,21 +106,25 @@ header h1 span{color:var(--accent);font-weight:500}
 .toggle-label{font-size:13px;color:var(--text2)}
 .stock-inp{flex:1;min-width:160px;background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:'DM Mono',monospace;font-size:12px;padding:7px 10px}
 .stock-inp:focus{outline:none;border-color:var(--accent)}
-.check-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:8px}
-.check-date{font-size:12px;color:var(--text2);font-family:'DM Mono',monospace;flex:1}
-.check-note-inp{flex:1;min-width:160px;background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:'DM Mono',monospace;font-size:12px;padding:7px 10px}
-.check-note-inp:focus{outline:none;border-color:var(--orange)}
+.sealant-row{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:end;margin-top:8px}
+@media(max-width:480px){.sealant-row{grid-template-columns:1fr}}
+.sealant-status{font-size:11px;font-family:'DM Mono',monospace;padding:4px 8px;border-radius:3px;white-space:nowrap}
+.sealant-status.ok{color:var(--green)}
+.sealant-status.warn{color:var(--orange)}
+.sealant-status.unknown{color:var(--text3)}
 .history-section{margin-bottom:14px}
 .history-title{font-size:10px;font-family:'DM Mono',monospace;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
 .history-list{display:flex;flex-direction:column;gap:4px}
 .history-item{display:flex;align-items:center;gap:10px;font-size:11px;font-family:'DM Mono',monospace;color:var(--text2);background:var(--surface);border-radius:var(--radius);padding:8px 10px;flex-wrap:wrap}
 .history-item.check-item{border-left:2px solid var(--orange)}
 .history-item.replace-item{border-left:2px solid var(--green)}
+.history-item.sealant-item{border-left:2px solid var(--blue)}
 .h-date{color:var(--text3);flex-shrink:0}
 .h-km{color:var(--accent);flex-shrink:0}
 .h-type{font-size:10px;padding:1px 6px;border-radius:2px;flex-shrink:0}
 .h-type.check{background:#2a1a00;color:var(--orange)}
 .h-type.replace{background:#0f2a1a;color:var(--green)}
+.h-type.sealant{background:#0f1a2a;color:var(--blue)}
 .h-note{color:var(--text3);font-style:italic}
 .history-empty{font-size:12px;color:var(--text3);font-style:italic}
 .detail-actions{display:flex;gap:8px;flex-wrap:wrap}
@@ -122,36 +134,45 @@ header h1 span{color:var(--accent);font-weight:500}
 .icon-btn.replace-btn:hover{background:var(--green);color:#0f0f0f}
 .icon-btn.check-btn{border-color:#3a2d00;color:var(--orange)}
 .icon-btn.check-btn:hover{background:var(--orange);color:#0f0f0f}
+.icon-btn.sealant-btn{border-color:#1a3a5a;color:var(--blue)}
+.icon-btn.sealant-btn:hover{background:var(--blue);color:#0f0f0f}
 .alerts-list{display:flex;flex-direction:column;gap:8px}
 .alert-card{background:var(--surface);border-radius:var(--radius-lg);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:1rem;border-left:3px solid;flex-wrap:wrap}
 .alert-card.danger{border-left-color:var(--red)}
 .alert-card.warn{border-left-color:var(--orange)}
-.alert-card.checked{border-left-color:var(--orange);opacity:.75}
+.alert-card.checked{border-left-color:var(--orange);opacity:.8}
+.alert-card.sealant{border-left-color:var(--blue)}
 .a-bike{font-size:10px;font-family:'DM Mono',monospace;color:var(--text3);margin-bottom:2px}
 .a-part{font-size:14px;font-weight:500}
 .a-msg{font-size:12px;color:var(--text2);margin-top:2px}
 .empty-state{text-align:center;padding:3rem 1rem;color:var(--text3);font-size:14px}
 .empty-state .big{font-size:32px;margin-bottom:8px}
 
-/* Register tab */
-.reg-intro{font-size:13px;color:var(--text2);margin-bottom:1.5rem;line-height:1.6}
-.reg-bike-block{margin-bottom:2rem}
-.reg-bike-title{font-size:15px;font-weight:500;margin-bottom:4px}
-.reg-bike-meta{font-size:11px;color:var(--text2);font-family:'DM Mono',monospace;margin-bottom:12px}
-.reg-cat-title{font-size:10px;font-family:'DM Mono',monospace;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin:12px 0 6px;padding-bottom:4px;border-bottom:1px solid var(--border)}
-.reg-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px;background:var(--surface);border-radius:var(--radius);padding:10px 14px;align-items:start}
-@media(max-width:500px){.reg-row{grid-template-columns:1fr}}
-.reg-part-name{font-size:13px;font-weight:500;margin-bottom:2px}
-.reg-part-hint{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace}
-.reg-inputs{display:flex;flex-direction:column;gap:6px}
-.reg-inp{width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:'DM Mono',monospace;font-size:12px;padding:6px 10px}
+/* Register */
+.reg-tabs{display:flex;gap:4px;margin-bottom:1.25rem}
+.reg-tab{font-size:12px;padding:7px 14px;cursor:pointer;border:1px solid var(--border);border-radius:var(--radius);background:transparent;color:var(--text2);font-family:'DM Sans',sans-serif;transition:all .15s;white-space:nowrap}
+.reg-tab:hover{border-color:var(--accent);color:var(--accent)}
+.reg-tab.active{background:var(--accent);color:#0f0f0f;border-color:var(--accent);font-weight:500}
+.reg-bike-content{display:none}
+.reg-bike-content.active{display:block}
+.reg-bike-header{margin-bottom:1rem}
+.reg-bike-title{font-size:16px;font-weight:500}
+.reg-bike-meta{font-size:12px;color:var(--text2);font-family:'DM Mono',monospace;margin-top:3px}
+.reg-cat-title{font-size:10px;font-family:'DM Mono',monospace;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin:14px 0 6px;padding-bottom:4px;border-bottom:1px solid var(--border)}
+.reg-rows{display:flex;flex-direction:column;gap:5px}
+.reg-row{display:grid;grid-template-columns:180px 1fr auto;gap:10px;background:var(--surface);border-radius:var(--radius);padding:10px 14px;align-items:center}
+@media(max-width:540px){.reg-row{grid-template-columns:1fr}}
+.reg-part-name{font-size:13px;font-weight:500}
+.reg-part-hint{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:2px}
+.reg-inp{width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:'DM Mono',monospace;font-size:12px;padding:7px 10px}
 .reg-inp:focus{outline:none;border-color:var(--accent)}
 .reg-inp::placeholder{color:var(--text3)}
-.reg-stock-row{display:flex;align-items:center;gap:8px}
-.reg-stock-row .toggle{width:30px;height:17px}
-.reg-stock-row .toggle::after{width:11px;height:11px;top:3px;left:3px}
-.reg-stock-row .toggle.on::after{left:16px}
-.reg-stock-label{font-size:11px;color:var(--text2)}
+.reg-toggle-wrap{display:flex;align-items:center;gap:6px;white-space:nowrap}
+.reg-toggle{width:30px;height:17px;background:var(--surface3);border-radius:9px;border:none;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0}
+.reg-toggle.on{background:var(--blue)}
+.reg-toggle::after{content:'';position:absolute;width:11px;height:11px;background:#fff;border-radius:50%;top:3px;left:3px;transition:left .2s}
+.reg-toggle.on::after{left:16px}
+.reg-toggle-label{font-size:11px;color:var(--text3)}
 
 /* Modal */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:100;display:none;align-items:center;justify-content:center;padding:1rem}
@@ -167,49 +188,76 @@ header h1 span{color:var(--accent);font-weight:500}
 <div class="app">
   <header>
     <div>
-      <div class="logo">fiets onderhoud tracker v1.4</div>
+      <div class="logo">fiets onderhoud tracker v1.5</div>
       <h1>Onderhoud<span>.</span></h1>
     </div>
-    <button class="strava-btn" id="strava-main-btn" onclick="toggleSetup()">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/></svg>
-      <span id="strava-btn-txt">Strava koppelen</span>
-    </button>
+    <div class="strava-btns">
+      <button class="strava-btn" id="strava-btn-esmee" onclick="toggleSetup('esmee')">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/></svg>
+        <span id="strava-txt-esmee">Esmee — Strava</span>
+      </button>
+      <button class="strava-btn" id="strava-btn-margriet" onclick="toggleSetup('margriet')">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/></svg>
+        <span id="strava-txt-margriet">Margriet — Strava</span>
+      </button>
+    </div>
   </header>
 
-  <div class="setup-panel" id="setup-panel">
-    <h3>Strava koppelen</h3>
-    <p>Je hebt een gratis Strava API-applicatie nodig. Dit doe je één keer:</p>
+  <!-- Setup Esmee -->
+  <div class="setup-panel" id="setup-esmee">
+    <h3>Strava koppelen — Esmee</h3>
+    <p>Koppelt de ROSE PRO SL en ROSE Hobo aan Esmee's Strava account.</p>
     <ol>
       <li>Ga naar <a href="https://www.strava.com/settings/api" target="_blank">strava.com/settings/api</a></li>
-      <li>Maak een applicatie aan (naam maakt niet uit)</li>
-      <li>Zet bij <strong>Authorization Callback Domain</strong>: <code>hallometesmee.github.io</code></li>
-      <li>Kopieer je <strong>Client ID</strong> en <strong>Client Secret</strong> hieronder</li>
-      <li>Vul de <strong>Strava Bike ID</strong> per fiets in — begint altijd met <code>b</code>, bijv. <code>b10584094</code></li>
-      <li>Klik "Autoriseer met Strava" en geef toestemming</li>
+      <li>Maak een applicatie aan — zet <strong>Authorization Callback Domain</strong> op <code>hallometesmee.github.io</code></li>
+      <li>Kopieer Client ID en Client Secret hieronder</li>
+      <li>Vul de Bike ID's in — begint met <code>b</code>, bijv. <code>b10584094</code></li>
     </ol>
-    <div class="input-row"><label>Client ID</label><input id="cfg-client-id" placeholder="bijv. 232811" oninput="saveConfig()"></div>
-    <div class="input-row"><label>Client Secret</label><input id="cfg-client-secret" placeholder="abc123..." type="password" oninput="saveConfig()"></div>
-    <div style="height:8px"></div>
+    <div class="input-row"><label>Client ID</label><input id="cfg-esmee-client-id" placeholder="bijv. 232811" oninput="saveConfig()"></div>
+    <div class="input-row"><label>Client Secret</label><input id="cfg-esmee-client-secret" type="password" placeholder="abc123..." oninput="saveConfig()"></div>
+    <div style="height:6px"></div>
     <div class="input-row"><label>Bike ID — ROSE PRO</label><input id="cfg-bid-rose-pro" placeholder="b10584094" oninput="saveConfig()"></div>
     <div class="input-row"><label>Bike ID — ROSE Hobo</label><input id="cfg-bid-hobo" placeholder="b15503664" oninput="saveConfig()"></div>
-    <div class="input-row"><label>Bike ID — Liv Avail</label><input id="cfg-bid-liv" placeholder="b12345678" oninput="saveConfig()"></div>
     <div class="btn-row">
-      <button class="btn primary" onclick="startOAuth()">Autoriseer met Strava</button>
-      <button class="btn" id="refresh-btn" onclick="fetchStravaData()" style="display:none">Ververs km-standen</button>
-      <button class="btn" onclick="toggleSetup()">Sluiten</button>
-      <button class="btn danger" onclick="disconnectStrava()">Verbinding verbreken</button>
+      <button class="btn primary" onclick="startOAuth('esmee')">Autoriseer met Strava</button>
+      <button class="btn" id="refresh-btn-esmee" onclick="fetchStrava('esmee')" style="display:none">Ververs km</button>
+      <button class="btn" onclick="toggleSetup('esmee')">Sluiten</button>
+      <button class="btn danger" onclick="disconnect('esmee')">Verbinding verbreken</button>
     </div>
   </div>
 
-  <div class="status-bar">
-    <div><span class="status-dot disconnected" id="status-dot"></span><span class="status-txt" id="status-txt">Strava niet verbonden — km handmatig invoeren</span></div>
-    <span id="last-sync" style="color:var(--text3);font-size:11px"></span>
+  <!-- Setup Margriet -->
+  <div class="setup-panel" id="setup-margriet">
+    <h3>Strava koppelen — Margriet</h3>
+    <p>Koppelt de Liv Avail AR aan Margriet's eigen Strava account. Margriet logt in met haar eigen account.</p>
+    <ol>
+      <li>Gebruik dezelfde Strava API-applicatie als Esmee — of maak een nieuwe aan</li>
+      <li>Zet <strong>Authorization Callback Domain</strong> op <code>hallometesmee.github.io</code></li>
+      <li>Vul hieronder dezelfde Client ID en Secret in (of nieuwe)</li>
+      <li>Vul Margriet's Bike ID in voor de Liv Avail AR</li>
+    </ol>
+    <div class="input-row"><label>Client ID</label><input id="cfg-margriet-client-id" placeholder="bijv. 232811" oninput="saveConfig()"></div>
+    <div class="input-row"><label>Client Secret</label><input id="cfg-margriet-client-secret" type="password" placeholder="abc123..." oninput="saveConfig()"></div>
+    <div style="height:6px"></div>
+    <div class="input-row"><label>Bike ID — Liv Avail</label><input id="cfg-bid-liv" placeholder="b12345678" oninput="saveConfig()"></div>
+    <div class="btn-row">
+      <button class="btn secondary" onclick="startOAuth('margriet')">Autoriseer als Margriet</button>
+      <button class="btn" id="refresh-btn-margriet" onclick="fetchStrava('margriet')" style="display:none">Ververs km</button>
+      <button class="btn" onclick="toggleSetup('margriet')">Sluiten</button>
+      <button class="btn danger" onclick="disconnect('margriet')">Verbinding verbreken</button>
+    </div>
+  </div>
+
+  <!-- Status bars -->
+  <div class="status-bars">
+    <div class="status-bar"><div><span class="status-dot disconnected" id="dot-esmee"></span><span class="status-txt" id="txt-esmee">Esmee — Strava niet verbonden</span></div><span id="sync-esmee" style="color:var(--text3);font-size:11px"></span></div>
+    <div class="status-bar"><div><span class="status-dot disconnected" id="dot-margriet"></span><span class="status-txt" id="txt-margriet">Margriet — Strava niet verbonden</span></div><span id="sync-margriet" style="color:var(--text3);font-size:11px"></span></div>
   </div>
 
   <div class="tabs">
     <button class="tab active" onclick="switchTab('rose-pro',this)">ROSE PRO SL</button>
     <button class="tab" onclick="switchTab('hobo',this)">ROSE Hobo</button>
-    <button class="tab" onclick="switchTab('liv',this)">Liv Avail — Margriet</button>
+    <button class="tab" onclick="switchTab('liv',this)">Liv Avail AR</button>
     <button class="tab" onclick="switchTab('alerts',this)">Waarschuwingen</button>
     <button class="tab" onclick="switchTab('register',this)">Onderdelenregister</button>
   </div>
@@ -229,11 +277,11 @@ header h1 span{color:var(--accent);font-weight:500}
     <div class="modal-fields">
       <div class="field"><label>Nieuw model / type</label><input id="modal-model" placeholder="bijv. Shimano CN-HG701-11"></div>
       <div class="field"><label>Datum</label><input id="modal-date" type="date"></div>
-      <div class="field"><label>Km-stand bij vervanging</label><input id="modal-km" type="number" placeholder="bijv. 10250"></div>
+      <div class="field"><label>Km-stand bij vervanging</label><input id="modal-km" type="number"></div>
       <div class="field"><label>Notitie (optioneel)</label><input id="modal-note" placeholder="bijv. gelijktijdig cassette vervangen"></div>
     </div>
     <div class="modal-actions">
-      <button class="btn" onclick="closeModal()">Annuleren</button>
+      <button class="btn" onclick="closeModal('replace')">Annuleren</button>
       <button class="btn primary" onclick="confirmReplace()">Bevestig vervanging</button>
     </div>
   </div>
@@ -243,115 +291,140 @@ header h1 span{color:var(--accent);font-weight:500}
 <div class="modal-overlay" id="check-modal">
   <div class="modal">
     <h3>Onderdeel gecontroleerd</h3>
-    <p id="check-modal-desc">Markeer dit onderdeel als gecontroleerd en nog in orde. De teller loopt door maar de waarschuwing wordt oranje.</p>
+    <p id="check-desc">Markeer als gecontroleerd en nog in orde — waarschuwing wordt oranje.</p>
     <div class="modal-fields">
       <div class="field"><label>Datum</label><input id="check-date" type="date"></div>
-      <div class="field"><label>Km-stand bij controle</label><input id="check-km" type="number" placeholder="bijv. 10250"></div>
+      <div class="field"><label>Km-stand</label><input id="check-km" type="number"></div>
       <div class="field"><label>Opmerking</label><input id="check-note" placeholder="bijv. ketting gemeten, 0.3% slijtage"></div>
     </div>
     <div class="modal-actions">
-      <button class="btn" onclick="closeCheckModal()">Annuleren</button>
+      <button class="btn" onclick="closeModal('check')">Annuleren</button>
       <button class="btn" style="border-color:var(--orange);color:var(--orange)" onclick="confirmCheck()">Bevestig controle</button>
+    </div>
+  </div>
+</div>
+
+<!-- Sealant modal -->
+<div class="modal-overlay" id="sealant-modal">
+  <div class="modal">
+    <h3>Tubeless sealant ververst</h3>
+    <p id="sealant-desc">Datum vastleggen van sealant verversing.</p>
+    <div class="modal-fields">
+      <div class="field"><label>Datum</label><input id="sealant-date" type="date"></div>
+      <div class="field"><label>Notitie (optioneel)</label><input id="sealant-note" placeholder="bijv. Orange Seal bijgevuld, 60ml"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('sealant')">Annuleren</button>
+      <button class="btn" style="border-color:var(--blue);color:var(--blue)" onclick="confirmSealant()">Bevestig</button>
     </div>
   </div>
 </div>
 
 <script>
 const BIKES={
-  'rose-pro':{name:'ROSE PRO SL DISC',owner:'Esmee',spec:'Shimano Ultegra',cfgKey:'bid-rose-pro'},
-  'hobo':{name:'ROSE Hobo Dropbar',owner:'Esmee',spec:'Gravel',cfgKey:'bid-hobo'},
-  'liv':{name:'Liv Avail AR 2 2021',owner:'Margriet',spec:'Racefiets',cfgKey:'bid-liv'}
+  'rose-pro':{name:'ROSE PRO SL DISC',owner:'Esmee',spec:'Shimano Ultegra',cfgKey:'bid-rose-pro',stravaUser:'esmee'},
+  'hobo':{name:'ROSE Hobo Dropbar',owner:'Esmee',spec:'Gravel',cfgKey:'bid-hobo',stravaUser:'esmee'},
+  'liv':{name:'Liv Avail AR 2 2021',owner:'Margriet',spec:'Racefiets',cfgKey:'bid-liv',stravaUser:'margriet'}
 };
-
 const PARTS=[
-  {id:'ketting',name:'Ketting',cat:'Aandrijving',iv:{'rose-pro':2500,hobo:2000,liv:2500},hint:'Meten met kettingmeter; vervang bij 0.5% slijtage'},
-  {id:'cassette',name:'Cassette',cat:'Aandrijving',iv:{'rose-pro':8000,hobo:6000,liv:8000},hint:'Vervang gelijktijdig met 2e of 3e ketting'},
-  {id:'derailleur-wieltjes',name:'Derailleur wieltjes',cat:'Aandrijving',iv:{'rose-pro':8000,hobo:6000,liv:8000},hint:'Controleer op slijtage en speling'},
-  {id:'rem-voor',name:'Remblokken voor',cat:'Remmen',iv:{'rose-pro':3000,hobo:2500,liv:3000},hint:'Controleer dikte; minimaal 1mm resterende voering'},
-  {id:'rem-achter',name:'Remblokken achter',cat:'Remmen',iv:{'rose-pro':3000,hobo:2500,liv:3000},hint:'Achter slijt sneller dan voor'},
-  {id:'balhoofd',name:'Lager — balhoofd',cat:'Lagers',iv:{'rose-pro':15000,hobo:10000,liv:15000},hint:'Controleer op speling en krakend geluid'},
-  {id:'trapas',name:'Lager — trapas',cat:'Lagers',iv:{'rose-pro':15000,hobo:10000,liv:15000},hint:'Bij Shimano RS-serie: BSA gewindeld'},
-  {id:'chainring',name:'Tandwiel / chainring',cat:'Aandrijving',iv:{'rose-pro':15000,hobo:12000,liv:15000},hint:'Controleer haakvorming tanden'},
-  {id:'shift-in',name:'Shiftkabels binnen',cat:'Kabels',iv:{'rose-pro':10000,hobo:8000,liv:10000},hint:'Jagwire Slick-Lube Liner aanbevolen'},
-  {id:'shift-out',name:'Shiftkabels buiten',cat:'Kabels',iv:{'rose-pro':20000,hobo:15000,liv:20000},hint:'Vervang bij zichtbare knikken of corrosie'},
-  {id:'stuurlint',name:'Stuurlint / bar tape',cat:'Comfort',iv:{'rose-pro':8000,hobo:6000,liv:8000},hint:''},
-  {id:'band-voor',name:'Band voor',cat:'Banden',iv:{'rose-pro':5000,hobo:4000,liv:5000},hint:'Tubeless: sealant verversen na 4-6 maanden'},
-  {id:'band-achter',name:'Band achter',cat:'Banden',iv:{'rose-pro':4000,hobo:3500,liv:4000},hint:'Achter slijt ~30% sneller dan voor'},
+  {id:'ketting',name:'Ketting',cat:'Aandrijving',iv:{'rose-pro':2500,hobo:2000,liv:2500},hint:'Meten met kettingmeter; vervang bij 0.5% slijtage',sealant:false},
+  {id:'cassette',name:'Cassette',cat:'Aandrijving',iv:{'rose-pro':8000,hobo:6000,liv:8000},hint:'Vervang gelijktijdig met 2e of 3e ketting',sealant:false},
+  {id:'derailleur-wieltjes',name:'Derailleur wieltjes',cat:'Aandrijving',iv:{'rose-pro':8000,hobo:6000,liv:8000},hint:'Controleer op slijtage en speling',sealant:false},
+  {id:'rem-voor',name:'Remblokken voor',cat:'Remmen',iv:{'rose-pro':3000,hobo:2500,liv:3000},hint:'Minimaal 1mm resterende voering',sealant:false},
+  {id:'rem-achter',name:'Remblokken achter',cat:'Remmen',iv:{'rose-pro':3000,hobo:2500,liv:3000},hint:'Achter slijt sneller dan voor',sealant:false},
+  {id:'balhoofd',name:'Lager — balhoofd',cat:'Lagers',iv:{'rose-pro':15000,hobo:10000,liv:15000},hint:'Controleer op speling en krakend geluid',sealant:false},
+  {id:'trapas',name:'Lager — trapas',cat:'Lagers',iv:{'rose-pro':15000,hobo:10000,liv:15000},hint:'BSA gewindeld bij Shimano RS-serie',sealant:false},
+  {id:'chainring',name:'Tandwiel / chainring',cat:'Aandrijving',iv:{'rose-pro':15000,hobo:12000,liv:15000},hint:'Controleer haakvorming tanden',sealant:false},
+  {id:'shift-in',name:'Shiftkabels binnen',cat:'Kabels',iv:{'rose-pro':10000,hobo:8000,liv:10000},hint:'Jagwire Slick-Lube Liner aanbevolen',sealant:false},
+  {id:'shift-out',name:'Shiftkabels buiten',cat:'Kabels',iv:{'rose-pro':20000,hobo:15000,liv:20000},hint:'Vervang bij knikken of corrosie',sealant:false},
+  {id:'stuurlint',name:'Stuurlint / bar tape',cat:'Comfort',iv:{'rose-pro':8000,hobo:6000,liv:8000},hint:'',sealant:false},
+  {id:'band-voor',name:'Band voor',cat:'Banden',iv:{'rose-pro':5000,hobo:4000,liv:5000},hint:'Tubeless: sealant verversen',sealant:true},
+  {id:'band-achter',name:'Band achter',cat:'Banden',iv:{'rose-pro':4000,hobo:3500,liv:4000},hint:'Achter slijt ~30% sneller dan voor',sealant:true},
 ];
-
 const REG_PARTS=[
   {id:'ketting',name:'Ketting',cat:'Aandrijving',hint:'bijv. Shimano CN-HG701-11'},
   {id:'cassette',name:'Cassette',cat:'Aandrijving',hint:'bijv. CS-HG800 11-30T'},
   {id:'derailleur-wieltjes',name:'Derailleur wieltjes',cat:'Aandrijving',hint:'bijv. Shimano jockey wheels'},
-  {id:'chainring-groot',name:'Tandwiel groot',cat:'Aandrijving',hint:'bijv. 50T, 110 BCD'},
-  {id:'chainring-klein',name:'Tandwiel klein',cat:'Aandrijving',hint:'bijv. 34T, 110 BCD'},
-  {id:'crank',name:'Crankstel',cat:'Aandrijving',hint:'bijv. FC-R8000, 172.5mm'},
+  {id:'chainring-groot',name:'Tandwiel groot',cat:'Aandrijving',hint:'bijv. 50T 110 BCD'},
+  {id:'chainring-klein',name:'Tandwiel klein',cat:'Aandrijving',hint:'bijv. 34T 110 BCD'},
+  {id:'crank',name:'Crankstel',cat:'Aandrijving',hint:'bijv. FC-R8000 172.5mm'},
   {id:'rem-voor',name:'Remblokken voor',cat:'Remmen',hint:'bijv. L03A resin'},
   {id:'rem-achter',name:'Remblokken achter',cat:'Remmen',hint:'bijv. L03A resin'},
   {id:'remschijf-voor',name:'Remschijf voor',cat:'Remmen',hint:'bijv. 160mm center-lock'},
   {id:'remschijf-achter',name:'Remschijf achter',cat:'Remmen',hint:'bijv. 140mm center-lock'},
   {id:'balhoofd',name:'Lager — balhoofd',cat:'Lagers',hint:'bijv. MH-P08F / MH-P22'},
-  {id:'trapas',name:'Lager — trapas',cat:'Lagers',hint:'bijv. Shimano RS501 BSA 68mm'},
+  {id:'trapas',name:'Lager — trapas',cat:'Lagers',hint:'bijv. RS501 BSA 68mm'},
   {id:'shift-in',name:'Shiftkabels binnen',cat:'Kabels',hint:'bijv. Jagwire 2x Sport Shift'},
   {id:'shift-out',name:'Shiftkabels buiten',cat:'Kabels',hint:'bijv. Jagwire Slick-Lube Liner'},
   {id:'derailleur-voor',name:'Derailleur voor',cat:'Schakeling',hint:'bijv. Shimano FD-R8000'},
   {id:'derailleur-achter',name:'Derailleur achter',cat:'Schakeling',hint:'bijv. Shimano RD-R8000 GS'},
-  {id:'band-voor',name:'Band voor',cat:'Banden',hint:'bijv. 700x28c, tubeless'},
-  {id:'band-achter',name:'Band achter',cat:'Banden',hint:'bijv. 700x28c, tubeless'},
-  {id:'sealant',name:'Tubeless sealant',cat:'Banden',hint:'bijv. Orange Seal, 60ml'},
+  {id:'band-voor',name:'Band voor',cat:'Banden',hint:'bijv. 700x28c tubeless'},
+  {id:'band-achter',name:'Band achter',cat:'Banden',hint:'bijv. 700x28c tubeless'},
+  {id:'sealant',name:'Tubeless sealant',cat:'Banden',hint:'bijv. Orange Seal 60ml'},
   {id:'stuur',name:'Stuur',cat:'Cockpit',hint:'bijv. 40cm compact drop'},
   {id:'stuurlint',name:'Stuurlint / bar tape',cat:'Cockpit',hint:'bijv. Fizik Tempo 2mm'},
-  {id:'stem',name:'Stuurpen (stem)',cat:'Cockpit',hint:'bijv. 100mm, -6°'},
+  {id:'stem',name:'Stuurpen',cat:'Cockpit',hint:'bijv. 100mm -6°'},
   {id:'zadel',name:'Zadel',cat:'Comfort',hint:'bijv. Fizik Antares 145mm'},
   {id:'zadelpen',name:'Zadelpen',cat:'Comfort',hint:'bijv. 27.2mm'},
   {id:'pedalen',name:'Pedalen',cat:'Overig',hint:'bijv. Shimano SPD-SL'},
 ];
 
-let state={bikes:{},config:{},strava:{connected:false,token:null,expiresAt:0},register:{}};
-let modalCtx=null,checkCtx=null;
+let state={bikes:{},config:{},strava:{esmee:{connected:false,token:null,expiresAt:0},margriet:{connected:false,token:null,expiresAt:0}},register:{}};
+let modalCtx=null,checkCtx=null,sealantCtx=null;
 
 function loadState(){
-  try{const s=localStorage.getItem('fiets-v4');if(s)state={...state,...JSON.parse(s)};}catch(e){}
+  try{const s=localStorage.getItem('fiets-v5');if(s)state={...state,...JSON.parse(s)};}catch(e){}
+  if(!state.strava||!state.strava.esmee)state.strava={esmee:{connected:false,token:null,expiresAt:0},margriet:{connected:false,token:null,expiresAt:0}};
   Object.keys(BIKES).forEach(bid=>{
     if(!state.bikes[bid])state.bikes[bid]={km:0,parts:{}};
     PARTS.forEach(p=>{
-      if(!state.bikes[bid].parts[p.id])state.bikes[bid].parts[p.id]={model:'',kmInstall:0,interval:p.iv[bid],history:[],stock:false,stockModel:'',lastCheck:null,lastCheckNote:''};
+      if(!state.bikes[bid].parts[p.id])state.bikes[bid].parts[p.id]={model:'',kmInstall:0,interval:p.iv[bid],history:[],stock:false,stockModel:'',lastCheck:null,lastCheckNote:'',sealantDate:null,sealantMonths:4};
       const pt=state.bikes[bid].parts[p.id];
-      if(pt.stock===undefined){pt.stock=false;pt.stockModel='';}
-      if(pt.lastCheck===undefined){pt.lastCheck=null;pt.lastCheckNote='';}
+      if(pt.sealantDate===undefined){pt.sealantDate=null;pt.sealantMonths=4;}
     });
   });
-  // Register
   Object.keys(BIKES).forEach(bid=>{
     if(!state.register[bid])state.register[bid]={};
-    REG_PARTS.forEach(p=>{
-      if(!state.register[bid][p.id])state.register[bid][p.id]={model:'',stock:false};
-    });
+    REG_PARTS.forEach(p=>{if(!state.register[bid][p.id])state.register[bid][p.id]={model:'',stock:false};});
   });
 }
-function saveState(){try{localStorage.setItem('fiets-v4',JSON.stringify(state));}catch(e){}}
+function saveState(){try{localStorage.setItem('fiets-v5',JSON.stringify(state));}catch(e){}}
 function loadConfig(){
-  try{const c=localStorage.getItem('fiets-config');if(c)state.config=JSON.parse(c);
-  ['client-id','client-secret','bid-rose-pro','bid-hobo','bid-liv'].forEach(k=>{const el=document.getElementById('cfg-'+k);if(el&&state.config[k])el.value=state.config[k];});}catch(e){}
+  try{
+    const c=localStorage.getItem('fiets-config');if(c)state.config=JSON.parse(c);
+    ['esmee-client-id','esmee-client-secret','margriet-client-id','margriet-client-secret','bid-rose-pro','bid-hobo','bid-liv'].forEach(k=>{
+      const el=document.getElementById('cfg-'+k);if(el&&state.config[k])el.value=state.config[k];
+    });
+  }catch(e){}
 }
 function saveConfig(){
-  ['client-id','client-secret','bid-rose-pro','bid-hobo','bid-liv'].forEach(k=>{const el=document.getElementById('cfg-'+k);if(el)state.config[k]=el.value;});
+  ['esmee-client-id','esmee-client-secret','margriet-client-id','margriet-client-secret','bid-rose-pro','bid-hobo','bid-liv'].forEach(k=>{
+    const el=document.getElementById('cfg-'+k);if(el)state.config[k]=el.value;
+  });
   localStorage.setItem('fiets-config',JSON.stringify(state.config));
 }
 
-// Status berekening — checked override bij waarschuwing
+function getSealantStatus(part){
+  if(!part.sealantDate)return{cls:'unknown',label:'Sealant: onbekend'};
+  const d=new Date(part.sealantDate);
+  const months=(Date.now()-d.getTime())/(1000*60*60*24*30.44);
+  const rem=Math.round(part.sealantMonths-months);
+  if(rem<=0)return{cls:'warn',label:`Sealant: verversen! (${Math.abs(rem)} mnd geleden)`};
+  if(rem<=1)return{cls:'warn',label:`Sealant: bijna (${rem} mnd)`};
+  return{cls:'ok',label:`Sealant: nog ~${rem} mnd`};
+}
+
 function getSt(bike,part){
   const used=bike.km-part.kmInstall;
   if(bike.km===0&&part.kmInstall===0)return{pct:0,cls:'unknown',label:'Onbekend',rem:null};
   const rem=part.interval-used;
   const pct=Math.max(0,Math.min(100,Math.round(rem/part.interval*100)));
   if(rem<=0){
-    // Als recent gecontroleerd en nog goed: oranje (checked) ipv rood
     if(part.lastCheck)return{pct:0,cls:'checked',label:'Gecontroleerd',rem:0};
     return{pct:0,cls:'danger',label:'Vervangen!',rem:0};
   }
   if(pct<=20){
-    if(part.lastCheck)return{pct,cls:'checked',label:'Gecontroleerd ·  '+rem.toLocaleString('nl')+' km',rem};
+    if(part.lastCheck)return{pct,cls:'checked',label:'Gecontroleerd · '+rem.toLocaleString('nl')+' km',rem};
     return{pct,cls:'warn',label:rem.toLocaleString('nl')+' km',rem};
   }
   return{pct,cls:'ok',label:rem.toLocaleString('nl')+' km',rem};
@@ -360,48 +433,62 @@ function getSt(bike,part){
 function renderBike(bid){
   const bike=state.bikes[bid],meta=BIKES[bid],cont=document.getElementById('tab-'+bid);
   if(!cont)return;
-  const conn=state.strava.connected;
+  const user=meta.stravaUser;
+  const conn=state.strava[user]&&state.strava[user].connected;
   const kmSec=conn
     ?`<div class="km-row"><div><div class="km-big">${bike.km.toLocaleString('nl')}</div><div class="km-label">km via Strava</div></div></div>`
     :`<div class="km-row"><div><div class="km-big">${bike.km?bike.km.toLocaleString('nl'):'—'}</div><div class="km-label">km (handmatig)</div></div><div class="km-input-wrap"><input type="number" value="${bike.km||''}" placeholder="0" onchange="updateKm('${bid}',this.value)"><span style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace">km</span></div></div>`;
   let cards='';
   PARTS.forEach(p=>{
     const part=bike.parts[p.id],st=getSt(bike,part);
+    const isBand=p.sealant;
+    const seal=isBand?getSealantStatus(part):null;
     const sdot=part.stock?`<div class="stock-dot" title="Op voorraad"></div>`:'';
-    const cdot=part.lastCheck&&(st.cls==='checked')?`<div class="checked-dot" title="Gecontroleerd op ${part.lastCheck}"></div>`:'';
+    const cdot=(part.lastCheck&&st.cls==='checked')?`<div class="checked-dot" title="Gecontroleerd ${part.lastCheck}"></div>`:'';
+    const sealBadge=isBand&&seal?`<span class="badge sealant">${seal.label}</span>`:'';
+    const subTxt=part.model||'klik om in te vullen';
+    const checkTxt=part.lastCheck?` · gecontroleerd ${part.lastCheck}`:'';
     cards+=`<div class="part-card">
       <div class="part-header" onclick="toggleDet('${bid}','${p.id}')">
-        <div class="part-left">
-          <div class="part-name">${p.name}</div>
-          <div class="part-sub">${part.model||'klik om in te vullen'}${part.lastCheck?` · gecontroleerd ${part.lastCheck}`:''}</div>
-        </div>
-        <div class="part-right">${cdot}${sdot}<div class="bar"><div class="bar-fill ${st.cls}" style="width:${st.pct}%"></div></div><span class="badge ${st.cls}">${st.label}</span></div>
+        <div class="part-left"><div class="part-name">${p.name}</div><div class="part-sub">${subTxt}${checkTxt}</div></div>
+        <div class="part-right">${cdot}${sdot}${sealBadge}<div class="bar"><div class="bar-fill ${st.cls}" style="width:${st.pct}%"></div></div><span class="badge ${st.cls}">${st.label}</span></div>
       </div>
-      <div class="part-detail" id="det-${bid}-${p.id}">${renderDet(bid,p.id,part,p.hint)}</div>
+      <div class="part-detail" id="det-${bid}-${p.id}">${renderDet(bid,p.id,part,p.hint,isBand)}</div>
     </div>`;
   });
   cont.innerHTML=`<div class="bike-header"><div class="bike-title">${meta.name}</div><div class="bike-meta">${meta.owner} · ${meta.spec}</div>${kmSec}</div><div class="parts-list">${cards}</div>`;
 }
 
-function renderDet(bid,pid,part,hint){
+function renderDet(bid,pid,part,hint,isBand){
   const hist=(part.history||[]).slice().reverse();
-  const hrows=hist.length?hist.map(h=>`<div class="history-item ${h.type==='check'?'check-item':'replace-item'}">
-    <span class="h-type ${h.type==='check'?'check':'replace'}">${h.type==='check'?'check':'vervangen'}</span>
+  const hrows=hist.length?hist.map(h=>`<div class="history-item ${h.type==='check'?'check-item':h.type==='sealant'?'sealant-item':'replace-item'}">
+    <span class="h-type ${h.type==='check'?'check':h.type==='sealant'?'sealant':'replace'}">${h.type==='check'?'check':h.type==='sealant'?'sealant':'vervangen'}</span>
     <span class="h-date">${h.date}</span>
-    <span class="h-km">${Number(h.km).toLocaleString('nl')} km</span>
+    ${h.km?`<span class="h-km">${Number(h.km).toLocaleString('nl')} km</span>`:''}
     <span>${h.model||''}</span>
     ${h.note?`<span class="h-note">${h.note}</span>`:''}
   </div>`).join(''):`<div class="history-empty">Nog geen geschiedenis</div>`;
 
   const checkInfo=part.lastCheck
-    ?`<div class="check-row"><span class="check-date">Laatste controle: <strong>${part.lastCheck}</strong>${part.lastCheckNote?' — '+part.lastCheckNote:''}</span></div>`
-    :`<div class="check-row"><span class="check-date" style="color:var(--text3)">Nog niet gecontroleerd</span></div>`;
+    ?`<div style="font-size:12px;color:var(--text2);font-family:'DM Mono',monospace">Laatste controle: <strong>${part.lastCheck}</strong>${part.lastCheckNote?' — '+part.lastCheckNote:''}</div>`
+    :`<div style="font-size:12px;color:var(--text3);font-family:'DM Mono',monospace">Nog niet gecontroleerd</div>`;
+
+  const sealantSection=isBand?`
+  <div class="section-box">
+    <div class="section-box-title">Tubeless sealant</div>
+    <div class="sealant-row">
+      <div class="field"><label>Datum laatste verversing</label><input type="date" id="seal-date-${bid}-${pid}" value="${part.sealantDate||''}" onchange="saveSealantDate('${bid}','${pid}')"></div>
+      <div class="field"><label>Verversen na (maanden)</label><input type="number" id="seal-months-${bid}-${pid}" value="${part.sealantMonths||4}" min="1" max="24" onchange="saveSealantDate('${bid}','${pid}')"></div>
+    </div>
+    <div style="margin-top:8px"><button class="icon-btn sealant-btn" onclick="openSealant('${bid}','${pid}')">💧 sealant ververst</button></div>
+  </div>`:'';
 
   return`<div class="detail-grid">
-    <div class="field"><label>Model / type${hint?` — ${hint}`:''}</label><input id="df-m-${bid}-${pid}" value="${part.model||''}" placeholder="model invullen" onchange="saveP('${bid}','${pid}')"></div>
+    <div class="field"><label>Model / type${hint?' — '+hint:''}</label><input id="df-m-${bid}-${pid}" value="${part.model||''}" placeholder="model invullen" onchange="saveP('${bid}','${pid}')"></div>
     <div class="field"><label>Km bij installatie</label><input type="number" id="df-k-${bid}-${pid}" value="${part.kmInstall||0}" onchange="saveP('${bid}','${pid}')"></div>
     <div class="field"><label>Interval (km)</label><input type="number" id="df-i-${bid}-${pid}" value="${part.interval}" onchange="saveP('${bid}','${pid}')"></div>
   </div>
+  ${sealantSection}
   <div class="section-box">
     <div class="section-box-title">Voorraad</div>
     <div class="stock-row">
@@ -421,9 +508,17 @@ function renderDet(bid,pid,part,hint){
   </div>`;
 }
 
+function saveSealantDate(bid,pid){
+  const part=state.bikes[bid].parts[pid];
+  const d=document.getElementById('seal-date-'+bid+'-'+pid);
+  const m=document.getElementById('seal-months-'+bid+'-'+pid);
+  if(d)part.sealantDate=d.value;
+  if(m)part.sealantMonths=parseInt(m.value)||4;
+  saveState();renderBike(bid);renderAlerts();
+}
+
 function toggleDet(bid,pid){
-  const el=document.getElementById('det-'+bid+'-'+pid);
-  if(!el)return;
+  const el=document.getElementById('det-'+bid+'-'+pid);if(!el)return;
   const open=el.classList.contains('open');
   document.querySelectorAll('.part-detail.open').forEach(d=>d.classList.remove('open'));
   if(!open)el.classList.add('open');
@@ -441,15 +536,12 @@ function saveP(bid,pid){
   const k=document.getElementById('df-k-'+bid+'-'+pid);
   const i=document.getElementById('df-i-'+bid+'-'+pid);
   const sm=document.getElementById('si-'+bid+'-'+pid);
-  if(m)part.model=m.value;
-  if(k)part.kmInstall=parseInt(k.value)||0;
-  if(i)part.interval=parseInt(i.value)||part.interval;
-  if(sm)part.stockModel=sm.value;
+  if(m)part.model=m.value;if(k)part.kmInstall=parseInt(k.value)||0;
+  if(i)part.interval=parseInt(i.value)||part.interval;if(sm)part.stockModel=sm.value;
   saveState();renderBike(bid);renderAlerts();
 }
 function updateKm(bid,val){state.bikes[bid].km=parseInt(val)||0;saveState();renderBike(bid);renderAlerts();}
 
-// Vervangen
 function openReplace(bid,pid){
   modalCtx={bid,pid};
   const part=state.bikes[bid].parts[pid],bike=state.bikes[bid];
@@ -461,7 +553,6 @@ function openReplace(bid,pid){
   document.getElementById('modal-note').value='';
   document.getElementById('replace-modal').classList.add('open');
 }
-function closeModal(){document.getElementById('replace-modal').classList.remove('open');modalCtx=null;}
 function confirmReplace(){
   if(!modalCtx)return;
   const{bid,pid}=modalCtx,part=state.bikes[bid].parts[pid];
@@ -471,26 +562,22 @@ function confirmReplace(){
   const note=document.getElementById('modal-note').value;
   if(!part.history)part.history=[];
   part.history.push({type:'replace',date,km,model:model||part.model,note});
-  part.model=model||part.model;
-  part.kmInstall=km;
-  part.lastCheck=null;part.lastCheckNote=''; // reset controle bij vervanging
+  part.model=model||part.model;part.kmInstall=km;
+  part.lastCheck=null;part.lastCheckNote='';
   if(part.stock){part.stock=false;part.stockModel='';}
   if(km>state.bikes[bid].km)state.bikes[bid].km=km;
-  saveState();closeModal();renderBike(bid);renderAlerts();
+  saveState();closeModal('replace');renderBike(bid);renderAlerts();
 }
 
-// Controleren
 function openCheck(bid,pid){
   checkCtx={bid,pid};
-  const bike=state.bikes[bid];
   const pdef=PARTS.find(p=>p.id===pid);
-  document.getElementById('check-modal-desc').textContent=`${pdef.name} op ${BIKES[bid].name} — markeer als gecontroleerd en nog in orde.`;
+  document.getElementById('check-desc').textContent=`${pdef.name} op ${BIKES[bid].name} — markeer als gecontroleerd.`;
   document.getElementById('check-date').value=new Date().toISOString().split('T')[0];
-  document.getElementById('check-km').value=bike.km||'';
+  document.getElementById('check-km').value=state.bikes[bid].km||'';
   document.getElementById('check-note').value='';
   document.getElementById('check-modal').classList.add('open');
 }
-function closeCheckModal(){document.getElementById('check-modal').classList.remove('open');checkCtx=null;}
 function confirmCheck(){
   if(!checkCtx)return;
   const{bid,pid}=checkCtx,part=state.bikes[bid].parts[pid];
@@ -499,10 +586,32 @@ function confirmCheck(){
   const note=document.getElementById('check-note').value;
   if(!part.history)part.history=[];
   part.history.push({type:'check',date,km,note});
-  part.lastCheck=date;
-  part.lastCheckNote=note;
-  saveState();closeCheckModal();renderBike(bid);renderAlerts();
+  part.lastCheck=date;part.lastCheckNote=note;
+  saveState();closeModal('check');renderBike(bid);renderAlerts();
 }
+
+function openSealant(bid,pid){
+  sealantCtx={bid,pid};
+  const pdef=PARTS.find(p=>p.id===pid);
+  document.getElementById('sealant-desc').textContent=`Sealant verversing vastleggen voor ${pdef.name} op ${BIKES[bid].name}.`;
+  document.getElementById('sealant-date').value=new Date().toISOString().split('T')[0];
+  document.getElementById('sealant-note').value='';
+  document.getElementById('sealant-modal').classList.add('open');
+}
+function confirmSealant(){
+  if(!sealantCtx)return;
+  const{bid,pid}=sealantCtx,part=state.bikes[bid].parts[pid];
+  const date=document.getElementById('sealant-date').value;
+  const note=document.getElementById('sealant-note').value;
+  if(!part.history)part.history=[];
+  part.history.push({type:'sealant',date,note});
+  part.sealantDate=date;
+  const inp=document.getElementById('seal-date-'+bid+'-'+pid);
+  if(inp)inp.value=date;
+  saveState();closeModal('sealant');renderBike(bid);renderAlerts();
+}
+
+function closeModal(type){document.getElementById(type+'-modal').classList.remove('open');modalCtx=null;checkCtx=null;sealantCtx=null;}
 
 function renderAlerts(){
   const cont=document.getElementById('tab-alerts');
@@ -513,19 +622,34 @@ function renderAlerts(){
       const part=bike.parts[p.id],st=getSt(bike,part);
       if(st.cls==='danger'||st.cls==='warn'||st.cls==='checked'){
         any=true;
-        const hs=part.stock;
         const isChecked=st.cls==='checked';
+        const hs=part.stock;
         html+=`<div class="alert-card ${st.cls}">
           <div>
             <div class="a-bike">${BIKES[bid].name} · ${BIKES[bid].owner}</div>
             <div class="a-part">${p.name}${hs?' <span style="font-size:10px;color:var(--blue)">(op voorraad)</span>':''}${isChecked?' <span style="font-size:10px;color:var(--orange)">(gecontroleerd)</span>':''}</div>
-            <div class="a-msg">${isChecked?`Gecontroleerd op ${part.lastCheck}${part.lastCheckNote?' — '+part.lastCheckNote:''}`:st.cls==='danger'?'Vervangingstijd bereikt!':'Nog '+st.rem.toLocaleString('nl')+' km'}${hs&&!isChecked?' — '+(part.stockModel||'onderdeel klaarliggen'):''}</div>
+            <div class="a-msg">${isChecked?`Gecontroleerd ${part.lastCheck}${part.lastCheckNote?' — '+part.lastCheckNote:''}`:st.cls==='danger'?'Vervangingstijd bereikt!':'Nog '+st.rem.toLocaleString('nl')+' km'}${hs&&!isChecked?' — '+(part.stockModel||'klaarliggen'):''}</div>
           </div>
           <div style="display:flex;gap:6px;flex-direction:column;align-items:flex-end">
             <button class="icon-btn replace-btn" onclick="openReplace('${bid}','${p.id}')">vervangen</button>
             ${!isChecked?`<button class="icon-btn check-btn" onclick="openCheck('${bid}','${p.id}')">gecontroleerd</button>`:''}
           </div>
         </div>`;
+      }
+      // Sealant alerts
+      if(p.sealant){
+        const seal=getSealantStatus(part);
+        if(seal.cls==='warn'){
+          any=true;
+          html+=`<div class="alert-card sealant">
+            <div>
+              <div class="a-bike">${BIKES[bid].name} · ${BIKES[bid].owner}</div>
+              <div class="a-part">${p.name} — tubeless sealant</div>
+              <div class="a-msg">${seal.label}</div>
+            </div>
+            <button class="icon-btn sealant-btn" onclick="openSealant('${bid}','${p.id}')">sealant ververst</button>
+          </div>`;
+        }
       }
     });
   });
@@ -535,31 +659,44 @@ function renderAlerts(){
 
 function renderRegister(){
   const cont=document.getElementById('tab-register');
-  let html=`<p class="reg-intro">Onderdelenregister — wat zit er nu op elke fiets? Vul dit in zodat je altijd weet wat je moet bestellen. Je kunt ook aangeven wat je op voorraad hebt.</p>`;
+  const bikeIds=Object.keys(BIKES);
+  // Tabs
+  let tabsHtml='<div class="reg-tabs">';
+  bikeIds.forEach((bid,i)=>{ tabsHtml+=`<button class="reg-tab${i===0?' active':''}" id="rtab-${bid}" onclick="switchRegTab('${bid}')">${BIKES[bid].name}</button>`; });
+  tabsHtml+='</div>';
 
-  Object.keys(BIKES).forEach(bid=>{
+  let contentHtml='';
+  bikeIds.forEach((bid,i)=>{
     const meta=BIKES[bid],reg=state.register[bid];
-    html+=`<div class="reg-bike-block"><div class="reg-bike-title">${meta.name}</div><div class="reg-bike-meta">${meta.owner} · ${meta.spec}</div>`;
     const cats=[...new Set(REG_PARTS.map(p=>p.cat))];
+    let inner='';
     cats.forEach(cat=>{
-      html+=`<div class="reg-cat-title">${cat}</div>`;
+      inner+=`<div class="reg-cat-title">${cat}</div><div class="reg-rows">`;
       REG_PARTS.filter(p=>p.cat===cat).forEach(p=>{
         const r=reg[p.id]||{model:'',stock:false};
-        html+=`<div class="reg-row">
+        inner+=`<div class="reg-row">
           <div><div class="reg-part-name">${p.name}</div><div class="reg-part-hint">${p.hint}</div></div>
-          <div class="reg-inputs">
-            <input class="reg-inp" id="ri-${bid}-${p.id}" value="${r.model||''}" placeholder="${p.hint}" onchange="saveReg('${bid}','${p.id}')">
-            <div class="reg-stock-row">
-              <button class="toggle ${r.stock?'on':''}" id="rtog-${bid}-${p.id}" onclick="togRegStock('${bid}','${p.id}')"></button>
-              <span class="reg-stock-label">Op voorraad</span>
-            </div>
+          <input class="reg-inp" id="ri-${bid}-${p.id}" value="${r.model||''}" placeholder="${p.hint}" onchange="saveReg('${bid}','${p.id}')">
+          <div class="reg-toggle-wrap">
+            <button class="reg-toggle${r.stock?' on':''}" id="rtog-${bid}-${p.id}" onclick="togRegStock('${bid}','${p.id}')"></button>
+            <span class="reg-toggle-label">voorraad</span>
           </div>
         </div>`;
       });
+      inner+=`</div>`;
     });
-    html+=`</div>`;
+    contentHtml+=`<div class="reg-bike-content${i===0?' active':''}" id="reg-content-${bid}">
+      <div class="reg-bike-header"><div class="reg-bike-title">${meta.name}</div><div class="reg-bike-meta">${meta.owner} · ${meta.spec}</div></div>
+      ${inner}
+    </div>`;
   });
-  cont.innerHTML=html;
+  cont.innerHTML=tabsHtml+contentHtml;
+}
+function switchRegTab(bid){
+  document.querySelectorAll('.reg-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.reg-bike-content').forEach(c=>c.classList.remove('active'));
+  const tb=document.getElementById('rtab-'+bid);if(tb)tb.classList.add('active');
+  const ct=document.getElementById('reg-content-'+bid);if(ct)ct.classList.add('active');
 }
 function saveReg(bid,pid){
   if(!state.register[bid])state.register[bid]={};
@@ -569,12 +706,11 @@ function saveReg(bid,pid){
   saveState();
 }
 function togRegStock(bid,pid){
-  if(!state.register[bid])state.register[bid]={};
   if(!state.register[bid][pid])state.register[bid][pid]={model:'',stock:false};
   state.register[bid][pid].stock=!state.register[bid][pid].stock;
   saveState();
   const tog=document.getElementById('rtog-'+bid+'-'+pid);
-  if(tog)tog.className='toggle'+(state.register[bid][pid].stock?' on':'');
+  if(tog)tog.className='reg-toggle'+(state.register[bid][pid].stock?' on':'');
 }
 
 function switchTab(id,btn){
@@ -586,12 +722,20 @@ function switchTab(id,btn){
   else if(id==='register')renderRegister();
   else renderBike(id);
 }
-function toggleSetup(){const p=document.getElementById('setup-panel');p.style.display=p.style.display==='block'?'none':'block';}
+function toggleSetup(who){
+  const panels=['setup-esmee','setup-margriet'];
+  const target='setup-'+who;
+  panels.forEach(p=>{
+    const el=document.getElementById(p);
+    el.style.display=(p===target&&el.style.display!=='block')?'block':'none';
+  });
+}
 
-// Strava
-function startOAuth(){
-  const cid=state.config['client-id'];
-  if(!cid){alert('Vul eerst je Strava Client ID in.');return;}
+// Strava OAuth — met 'pending' om te weten wie authoriseert
+function startOAuth(who){
+  const cid=state.config[who+'-client-id'];
+  if(!cid){alert('Vul eerst de Client ID in voor '+who+'.');return;}
+  sessionStorage.setItem('strava-pending',who);
   const red=encodeURIComponent(window.location.href.split('?')[0]);
   window.location.href=`https://www.strava.com/oauth/authorize?client_id=${cid}&redirect_uri=${red}&response_type=code&scope=read,activity:read,profile:read_all`;
 }
@@ -599,58 +743,73 @@ async function handleCb(){
   const p=new URLSearchParams(window.location.search),code=p.get('code');
   if(!code)return;
   history.replaceState({},'',window.location.pathname);
-  const cid=state.config['client-id'],cs=state.config['client-secret'];
-  if(!cid||!cs){alert('Client ID of Secret ontbreekt.');return;}
+  const who=sessionStorage.getItem('strava-pending')||'esmee';
+  sessionStorage.removeItem('strava-pending');
+  const cid=state.config[who+'-client-id'],cs=state.config[who+'-client-secret'];
+  if(!cid||!cs){alert('Client ID of Secret ontbreekt voor '+who+'.');return;}
   try{
     const r=await fetch('https://www.strava.com/oauth/token',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({client_id:cid,client_secret:cs,code,grant_type:'authorization_code'})});
     const d=await r.json();
-    if(d.access_token){state.strava.connected=true;state.strava.token=d.access_token;state.strava.refreshToken=d.refresh_token;state.strava.expiresAt=d.expires_at*1000;saveState();updateStravaUI();fetchStravaData();}
-    else alert('Strava autorisatie mislukt: '+(d.message||JSON.stringify(d)));
+    if(d.access_token){
+      state.strava[who].connected=true;state.strava[who].token=d.access_token;
+      state.strava[who].refreshToken=d.refresh_token;state.strava[who].expiresAt=d.expires_at*1000;
+      saveState();updateStravaUI();fetchStrava(who);
+    }else alert('Strava autorisatie mislukt: '+(d.message||JSON.stringify(d)));
   }catch(e){alert('Fout: '+e.message);}
 }
-async function refreshIfNeeded(){
-  if(!state.strava.connected)return false;
-  if(Date.now()<state.strava.expiresAt-60000)return true;
-  const cid=state.config['client-id'],cs=state.config['client-secret'];
-  if(!state.strava.refreshToken||!cid||!cs){disconnectStrava();return false;}
+async function refreshIfNeeded(who){
+  const s=state.strava[who];
+  if(!s.connected)return false;
+  if(Date.now()<s.expiresAt-60000)return true;
+  const cid=state.config[who+'-client-id'],cs=state.config[who+'-client-secret'];
+  if(!s.refreshToken||!cid||!cs){disconnect(who);return false;}
   try{
-    const r=await fetch('https://www.strava.com/oauth/token',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({client_id:cid,client_secret:cs,refresh_token:state.strava.refreshToken,grant_type:'refresh_token'})});
+    const r=await fetch('https://www.strava.com/oauth/token',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({client_id:cid,client_secret:cs,refresh_token:s.refreshToken,grant_type:'refresh_token'})});
     const d=await r.json();
-    if(d.access_token){state.strava.token=d.access_token;state.strava.expiresAt=d.expires_at*1000;state.strava.refreshToken=d.refresh_token;saveState();return true;}
+    if(d.access_token){s.token=d.access_token;s.expiresAt=d.expires_at*1000;s.refreshToken=d.refresh_token;saveState();return true;}
   }catch(e){}
   return false;
 }
-async function fetchStravaData(){
-  const ok=await refreshIfNeeded();if(!ok)return;
+async function fetchStrava(who){
+  const ok=await refreshIfNeeded(who);if(!ok)return;
   try{
-    const r=await fetch('https://www.strava.com/api/v3/athlete',{headers:{'Authorization':'Bearer '+state.strava.token}});
+    const r=await fetch('https://www.strava.com/api/v3/athlete',{headers:{'Authorization':'Bearer '+state.strava[who].token}});
     const a=await r.json();
     if(!a||!a.bikes){console.warn('Strava response:',a);return;}
     Object.keys(BIKES).forEach(bid=>{
+      if(BIKES[bid].stravaUser!==who)return;
       const sid=state.config[BIKES[bid].cfgKey];if(!sid)return;
       const found=a.bikes.find(b=>b.id===sid);
       if(found&&found.distance!=null)state.bikes[bid].km=Math.round(found.distance/1000);
     });
-    state.strava.lastSync=new Date().toLocaleString('nl-NL');
+    state.strava[who].lastSync=new Date().toLocaleString('nl-NL');
     saveState();updateStravaUI();
-    ['rose-pro','hobo','liv'].forEach(b=>renderBike(b));renderAlerts();
+    Object.keys(BIKES).filter(bid=>BIKES[bid].stravaUser===who).forEach(b=>renderBike(b));
+    renderAlerts();
   }catch(e){console.error(e);}
 }
-function disconnectStrava(){state.strava={connected:false,token:null,expiresAt:0};saveState();updateStravaUI();document.getElementById('setup-panel').style.display='none';}
+function disconnect(who){
+  state.strava[who]={connected:false,token:null,expiresAt:0};
+  saveState();updateStravaUI();
+  document.getElementById('setup-'+who).style.display='none';
+}
 function updateStravaUI(){
-  const c=state.strava.connected;
-  document.getElementById('strava-btn-txt').textContent=c?'Strava verbonden':'Strava koppelen';
-  document.getElementById('strava-main-btn').className='strava-btn'+(c?' connected':'');
-  document.getElementById('status-dot').className='status-dot '+(c?'connected':'disconnected');
-  document.getElementById('status-txt').textContent=c?'Strava verbonden — km worden automatisch geladen':'Strava niet verbonden — km handmatig invoeren';
-  const rb=document.getElementById('refresh-btn');if(rb)rb.style.display=c?'inline-block':'none';
-  if(state.strava.lastSync)document.getElementById('last-sync').textContent='Sync: '+state.strava.lastSync;
+  ['esmee','margriet'].forEach(who=>{
+    const c=state.strava[who]&&state.strava[who].connected;
+    const names={esmee:'Esmee',margriet:'Margriet'};
+    document.getElementById('strava-txt-'+who).textContent=names[who]+' — '+(c?'verbonden':'Strava');
+    document.getElementById('strava-btn-'+who).className='strava-btn'+(c?' connected':'');
+    document.getElementById('dot-'+who).className='status-dot '+(c?'connected':'disconnected');
+    document.getElementById('txt-'+who).textContent=names[who]+' — '+(c?'Strava verbonden':'niet verbonden, km handmatig invoeren');
+    const rb=document.getElementById('refresh-btn-'+who);if(rb)rb.style.display=c?'inline-block':'none';
+    const sync=document.getElementById('sync-'+who);if(sync&&state.strava[who]&&state.strava[who].lastSync)sync.textContent='Sync: '+state.strava[who].lastSync;
+  });
 }
 
 loadState();loadConfig();handleCb();updateStravaUI();
 ['rose-pro','hobo','liv'].forEach(b=>renderBike(b));
 renderAlerts();
-setInterval(()=>{if(state.strava.connected)fetchStravaData();},30*60*1000);
+setInterval(()=>{['esmee','margriet'].forEach(w=>{if(state.strava[w]&&state.strava[w].connected)fetchStrava(w);});},30*60*1000);
 </script>
 </body>
 </html>
